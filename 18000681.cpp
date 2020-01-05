@@ -23,6 +23,21 @@ class flight{
 };
 
 int main(){
-    ofstream myfile("Flights.txt");
+    ifstream myfile("Flights.txt");
 
+    if(myfile.is_open())
+    {   
+        string line;
+        while(getline(myfile, line)){
+            if(line == '\0'){
+
+            }
+            cout << line << endl;
+        }
+    }
+    else
+    {
+        cout << "Error while opening the file!" <<endl;
+    }
+    
 }
