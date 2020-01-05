@@ -28,9 +28,10 @@ int main(){
     if(myfile.is_open())
     {   
         string line;
-        while(getline(myfile, line)){
-            if(line == '\0'){
 
+        while(getline(myfile, line)){
+            if(line.length() == 0){
+                cout << "Blank line" <<endl;
             }
             cout << line << endl;
         }
