@@ -1,44 +1,103 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
 
 using namespace std;
 
+int count = 0;
+int line_count = 0;
+
 class flight{
     struct data{
-        int flight_no; 
+        string flight_no;
         string dateTime;
         char dep_airport[20];
         char arr_airport[20];
-        struct seat{
-            int row;
-            char seatClass;
-            char seatCode[6];
-        }seatArray[10];
-
-    public:
-        
+        char seat[50];
     };
 
+    public:
+    void ReadDataFromFile(int x);
 };
 
-int main(){
-    ifstream myfile("Flights.txt");
+void flight::ReadDataFromFile(int x){
 
-    if(myfile.is_open())
-    {   
-        string line;
+    ifstream file("Flights.txt");
 
-        while(getline(myfile, line)){
-            if(line.length() == 0){
-                cout << "Blank line" <<endl;
-            }
-            cout << line << endl;
+    string line;
+    int dataBlockCounter = 0;
+    int dataBlockLineCounter = 0;
+
+    if(file.is_open()){
+        while(getline(file, line)){
+            if(line == "\0")
+            count++;            //5
+            else
+            line_count++; //60
+
+        }
+    file.close();
+    ifstream file("Flights.txt");
+
+       struct data dataSet[count];
+
+        while(getline(file, line)){
+            
+
+            if(line != "\0"){
+
+                ++dataBlockLineCounter;
+
+                if(dataBlockLineCounter == 1){
+                    dataSet[dataBlockCounter].flight_no = line;
+                    //cout << dataSet[dataBlockCounter].flight_no << endl;
+                   }
+                else if(dataBlockLineCounter == 2)
+                    dataSet[dataBlockCounter].dateTime = line;
+                else if(dataBlockLineCounter == 3)
+                    line.copy(dataSet[dataBlockCounter].dep_airport, line.size()+1);
+                else if(dataBlockLineCounter == 4)
+                    line.copy(dataSet[dataBlockCounter].arr_airport, line.size()+1);
+                else
+                    line.copy(dataSet[dataBlockCounter].seat, line.size()+1);
+            } 
+            else{
+                 ++dataBlockCounter;
+                 dataBlockLineCounter = 0;
+            }           
+        }
+
+        file.close();
+
+        switch(x){
+            case 1:
+                for(int i = 0; i < count; ++i){
+                   // if(dataSet[i].flight_no != "\0"){
+                        cout << dataSet[i].flight_no << endl;
+                   // }
+                }
         }
     }
     else
-    {
-        cout << "Error while opening the file!" <<endl;
+        cout << "Error: Can't open the 'Flight.txt' file!" << endl;
+}
+
+
+int main(){
+    int opt;
+    bool flag = true;
+    flight obj;
+
+    do{
+        cout << "1: Display available flights." << endl;
+        cout << "2: View flights" <<endl;
+        cout << "3: Seat availability" << endl;
+        cout << "4: Seat Booking" << endl;
+        cout << "5: Exit" << endl;
+        cout << "Choose your option: ";
+        cin >> opt;
+        obj.ReadDataFromFile(opt);
     }
-    
+    while(flag);
 }
