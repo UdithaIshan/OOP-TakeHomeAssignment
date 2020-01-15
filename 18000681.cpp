@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <cstring>
+#include <sstream>
 
 using namespace std;
 
@@ -12,9 +13,9 @@ class flight{
     struct data{
         string flight_no;
         string dateTime;
-        char dep_airport[20];
-        char arr_airport[20];
-        char seat[60][50];
+        char dep_airport[20] = {'\0'};
+        char arr_airport[20] = {'\0'};
+        char seat[60][50] = {{'\0'}};
     };
 
     public:
@@ -78,13 +79,11 @@ void flight::ReadDataFromFile(int x){
         switch(x){
             case 1:
                 for(int i = 0, j = 0; i < count; ++i){
-                    if(dataSet[i].seat[j] != '\0'){
+                    if(dataSet[i].seat[j][0] != '\0'){
                         cout << endl << dataSet[i].flight_no << endl;
                         cout << dataSet[i].dateTime << endl;
                         cout << dataSet[i].dep_airport << endl;
                         cout << dataSet[i].arr_airport << endl;
-                        //int rows =  sizeof dataSet[i].seat / sizeof dataSet[i].seat[0];
-                        //cout << rows << endl;
                         for(j = 0; j < 60; ++j){
                         	if(dataSet[i].seat[j][0] != '\0')
                             cout << dataSet[i].seat[j] << endl;
@@ -120,19 +119,114 @@ void flight::ReadDataFromFile(int x){
                     cout << "ERROR: Flight not found!" << endl;}
                 break;
             case 3:{
-                string search;
-                bool flag = true;
+                string search, seatData;
+                int c0 = 0, c1 = 0, c2 = 0, seatCount, user;
                 cout << "Enter the flight no: ";
                 cin >> search;
-                for(int i = 0,j = 0; j < 60; ++j){
-                        	if(dataSet[i].seat[j][0] != '\0')
-                            cout << dataSet[i].seat[j] << endl;
-                            else
-                            	break;
+                cout << "How many seats do you want? ";
+                cin >> user;
+                for(int i = 0; i < count; ++i){
+                    if(dataSet[i].flight_no == search){
+                        for(int j = 0; j < 60; ++j){
+                            if(dataSet[i].seat[j][0] != '\0'){
+                                    seatData = dataSet[i].seat[j];
+                                    for(int i = 0; c0 < 2; i++){
+                                        if(seatData[i] == ' ')
+                                            ++c0;
+                                        ++c1;    
+                                    }
+                                    c2 = seatData.size() - c1;
+                            }
+                            seatCount += c2;
+                            c2 = 0;
+                            c0 = 0;
+                            c1 = 0;
                         }
+                        if(seatCount >= user)
+                            cout << " Available seat count :" << seatCount << endl;
+                        else
+                            cout << "Sorry!" << endl << "Seats are already booked." << endl;
+                    }
+                }
 				break;
 			}
-                
+            break;
+            case 4:{
+                string search, UseatName, Urow;
+                cout << "Enter the flight no: " << endl;
+                cin >> search;
+                cout << "Enter the Row no:" << endl;
+                cin >> Urow;
+                cout << "Enter the Seat Name:" << endl;
+                cin >> UseatName;
+
+                for(int i = 0; i < count; i++){
+                    if(dataSet[i].flight_no == search){
+                        for(int j = 0; j < 60; ++j){
+                            bool flag = false;
+                            if(dataSet[i].seat[j][0] != '\0'){
+                                string seatdata = dataSet[i].seat[j];
+                                istringstream buffer(seatdata);
+                                string row, sclass, number;
+                                char seats[11];
+                                int size, r,s, n;
+                                
+                                buffer >> row >>sclass >> number;
+                                size = seatdata.size();
+                                r = row.size();
+                                s = sclass.size();
+                                if(row == Urow){
+                                    int found = number.find(UseatName);
+                                    if(found != string::npos){
+                                        seatdata.erase(seatdata.begin() + (found + r + s + 2));
+                                        cout << seatdata << endl;
+                                        for(int k = 0; k < 50; ++k)
+                                        dataSet[i].seat[j][k] = '\0';
+                                        seatdata.copy(dataSet[i].seat[j], seatdata.size()+1);
+                                        cout << dataSet[i].seat[j] << endl;
+                                        cout << "Seat allocation successfull" << endl;
+                                        flag = true;
+                                    }
+                                    else
+                                        cout << "ERROR: Seat is unavailable !" << endl;
+                                }
+
+                            }
+                            if(flag){
+                                break;
+                            }
+                        }
+                    }
+                }
+                }
+                break;
+            case 5:{
+                ofstream myfile ("flights.dat", ios::app);
+                if (myfile.is_open()){
+                    string out;
+                    for(int i = 0, j = 0; i < count; ++i){
+                    out = dataSet[i].flight_no;
+                    myfile << out << endl;;
+                    out = dataSet[i].dateTime;
+                    myfile << out << endl;
+                    out = dataSet[i].dep_airport;
+                    myfile << out << endl;
+                    out = dataSet[i].arr_airport;
+                    myfile << out << endl;
+                    for(int j = 0; j < 60; ++j){
+                            if(dataSet[i].seat[j][0] != '\0'){
+                                    out = dataSet[i].seat[j];
+                                    myfile << out << endl;
+                            }
+                    }
+                    myfile << endl;   
+                    }
+                    myfile.close();
+                }
+                else cout << "Unable to open file" << endl;
+
+            }
+            break;    
         }
     }
     else
