@@ -136,10 +136,10 @@ int Flight::getBclass(){
 }
 
 void Flight::displayFlights(){
-    cout << "Flight Name: " << flight_no << endl;
-    cout << "Departure Date & Time: " << dateTime << endl;
-    cout << "Departure Airport: " << dep_airport << endl;
-    cout << "Arrival Airport: " << arr_airport << endl;
+    cout << "Flight Name            : " << flight_no << endl;
+    cout << "Departure Date & Time  : " << dateTime << endl;
+    cout << "Departure Airport      : " << dep_airport << endl;
+    cout << "Arrival Airport        : " << arr_airport << endl;
     setCount(); 
 }
 
@@ -162,7 +162,7 @@ int main(){
     }
     else
     {
-        cout << "ERROR: Can't open the file !" << endl;
+        cout << "ERROR: Unable to open the file !" << endl;
     }
     
     file.close();
@@ -207,14 +207,14 @@ int main(){
 
         file1.close();
     }
-    else cout << "ERROR: Can't open the file !" << endl;
+    else cout << "ERROR: Unable to open the file !" << endl;
 
     do{
         cout << endl << "1: Display available flights." << endl;
         cout << "2: View flights" <<endl;
         cout << "3: Seat availability" << endl;
         cout << "4: Seat Booking" << endl;
-        cout << "5: Exit" << endl;
+        cout << "5: Exit" << endl << endl;
         cout << "Choose your option: ";
         cin >> opt;
         cout << endl;
@@ -226,41 +226,49 @@ int main(){
             obj[i].setCount();
             if(obj[i].getCount() >= 1){
                 obj[i].displayFlights();
-                cout << obj[i].getCount() << endl << endl;
+                cout << "Available B Class seats: " << obj[i].getBclass() << endl;
+                cout << "Available E Class seats: " << obj[i].getEclass() << endl << endl;
                 }
 			}
             break;
         case 2:{
             string search;
-            cout << "Enter Flight no: " << endl;
+            cout << "Enter Flight name: ";
             cin >> search;
+            bool flag;
             for(int i = 0; i < count; ++i){
                 obj[i].setCount();
                 if(obj[i].getFlight() == search){
-                    {
+                    {flag = true;
                     for(int j = 0; j < 60; ++j){
-                        if(obj[i].getFlightRow(j) != "\0")
-                        cout << "Available seats: " << obj[i].getFlightRow(j) << " " << obj[i].getFlightClass(j) << " " << obj[i].getFlightSeatName(j) << endl;
+                        if(obj[i].getFlightRow(j) != "\0"){
+                        if(obj[i].getFlightSeatName(j) != "\0")
+                        cout << "Available seats in " << obj[i].getFlightRow(j) << "th Row: " << " " << obj[i].getFlightClass(j) << " " << obj[i].getFlightSeatName(j) << endl;}
+                        }
+                        cout << "Available E Class seats    : " << obj[i].getEclass() << endl;
+                        cout << "Available B Class seats    : " << obj[i].getBclass() << endl;
+                        cout << "Arrival airport            : " << obj[i].getArr() << endl;
+                        cout << "Departure airport          : " << obj[i].getDep() << endl;
+                        cout << "Departure Date & Time      : " << obj[i].getDate() << endl << endl;
+                        break;
                     }
-                        cout << "Available E Class seats: " << obj[i].getEclass() << endl;
-                        cout << "Available B Class seats: " << obj[i].getBclass() << endl;
-                        cout << "Arrival airport: " << obj[i].getArr() << endl;
-                        cout << "Departure airport: " << obj[i].getDep() << endl;
-                        cout << "Departure Date & Time: " << obj[i].getDate() << endl << endl;
-                    }
-                    }   
                 }
+                    else flag = false;
+                }
+                if(!flag) cout << "ERROR: Keyword does not match!" << endl;
             }
             break;
         case 3:{
             string search;
             int seat;
-            cout << "Enter Flight no: ";
+            bool flag;
+            cout << "Enter Flight name         : ";
             cin >> search;
             cout << "How many seats do you want? ";
             cin >> seat;
             for(int i = 0; i < count; ++i){
                 if(obj[i].getFlight() == search){
+                    flag = true;
                     obj[i].setCount();
                     if(obj[i].getCount() >= seat){
                         cout << "Available seats: " << endl;
@@ -271,18 +279,21 @@ int main(){
                             }
                         break;   
                         }
-                    else cout << "Sorry!" << endl << "Seats are already booked." << endl;
+                    else cout << endl << "Sorry!" << endl << "Only " << obj[i].getCount() << " seats available for you." << endl;
+                    break;
                     }
+                    else flag = false;
                 }
+                if(!flag) cout << "ERROR: Keyword does not match!" << endl;
             }
             break;
         case 4:{
                 string search, UseatName, Urow;
-                cout << "Enter the flight no: " << endl;
+                cout << "Enter the flight name: " << endl;
                 cin >> search;
-                cout << "Enter the Row no:" << endl;
+                cout << "Enter the Row no     :" << endl;
                 cin >> Urow;
-                cout << "Enter the Seat Name:" << endl;
+                cout << "Enter the Seat name  :" << endl;
                 cin >> UseatName;
 
                 for(int i = 0; i < count; i++){
@@ -327,15 +338,16 @@ int main(){
                     out = obj[i].getArr();
                     myfile << out << endl;
                     for(int j = 0; j < 60; ++j){
-                            if(obj[i].getFlightRow(j) != "\0"){
+                            if(obj[i].getFlightSeatName(j) != "\0"){
                                     myfile << obj[i].getFlightRow(j) << " " << obj[i].getFlightClass(j) << " " << obj[i].getFlightSeatName(j) << endl;
                             }
                     }
                     myfile << endl;   
                     }
                     myfile.close();
+                    return 0;
                 }
-                else cout << "Unable to open file" << endl;
+                else cout << "ERROR: Unable to create the file" << endl;
         }
         break;
 
