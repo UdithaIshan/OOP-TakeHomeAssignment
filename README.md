@@ -2,11 +2,9 @@ Object Oriented Programming - SCS1209
 
 Assignment 1
 
-Successfully tested on a Windows 10 environment.
-
-Compiler : TDM-GCC 4.9.2 64-bit release.
-
-Compilation results:
+Successfully tested on a Windows 10 environment.<br />
+Compiler : TDM-GCC 4.9.2 64-bit release.<br />
+Compilation results:<br />
 - Errors: 0
 - Warnings: 0
 - Output Filename: E:\main.exe
